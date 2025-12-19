@@ -45,7 +45,15 @@ struct ContentView: View {
                     Label("Open", systemImage: "folder")
                 }
                 .keyboardShortcut("o", modifiers: .command)
+
+                Button(action: { viewModel.showSettings() }) {
+                    Label("Settings", systemImage: "gearshape")
+                }
+                .keyboardShortcut(",", modifiers: .command)
             }
+        }
+        .sheet(isPresented: $viewModel.isSettingsPresented) {
+            SettingsView()
         }
         .fileImporter(
             isPresented: $viewModel.isFileImporterPresented,
