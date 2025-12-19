@@ -177,7 +177,7 @@ struct ArchiveSection: View {
                         }
                     }
                 } label: {
-                    Label(archived.displayName, systemImage: "archivebox")
+                    ArchivedChangeLabel(archived: archived)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             if expandedArchived.contains(archived.id) {
@@ -191,6 +191,32 @@ struct ArchiveSection: View {
                             }
                         }
                 }
+            }
+        }
+    }
+}
+
+/// A label view for archived changes that displays the change name with a date tag
+struct ArchivedChangeLabel: View {
+    let archived: ArchivedChange
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d, yyyy"
+        return formatter
+    }()
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Label(archived.displayName, systemImage: "archivebox")
+
+            if let date = archived.archiveDate {
+                Text(Self.dateFormatter.string(from: date))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 4))
             }
         }
     }
