@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import OSLog
 
 struct RecentDirectory: Identifiable, Codable, Hashable {
     var id: String { path }
@@ -29,6 +30,7 @@ final class RecentDirectoriesService: @unchecked Sendable {
     }
 
     func addRecent(url: URL, name: String) {
+        Logger.fileSystem.debug("Adding recent directory: \(name)")
         var bookmarkData: Data?
         do {
             bookmarkData = try url.bookmarkData(
@@ -37,7 +39,7 @@ final class RecentDirectoriesService: @unchecked Sendable {
                 relativeTo: nil
             )
         } catch {
-            print("Failed to create bookmark for \(url): \(error)")
+            Logger.fileSystem.error("Failed to create bookmark for \(url.path): \(error.localizedDescription)")
         }
 
         let recent = RecentDirectory(
@@ -87,7 +89,7 @@ final class RecentDirectoriesService: @unchecked Sendable {
 
             return url
         } catch {
-            print("Failed to resolve bookmark for \(directory.path): \(error)")
+            Logger.fileSystem.error("Failed to resolve bookmark for \(directory.path): \(error.localizedDescription)")
             return directory.url
         }
     }
@@ -106,19 +108,21 @@ final class RecentDirectoriesService: @unchecked Sendable {
             recentDirectories[index].bookmarkData = newBookmarkData
             saveRecent()
         } catch {
-            print("Failed to update bookmark: \(error)")
+            Logger.fileSystem.error("Failed to update bookmark: \(error.localizedDescription)")
         }
     }
 
     private func loadRecent() {
         guard let data = UserDefaults.standard.data(forKey: Self.userDefaultsKey) else {
+            Logger.app.debug("No recent directories found in UserDefaults")
             return
         }
 
         do {
             recentDirectories = try JSONDecoder().decode([RecentDirectory].self, from: data)
+            Logger.app.debug("Loaded \(recentDirectories.count) recent directories")
         } catch {
-            print("Failed to decode recent directories: \(error)")
+            Logger.app.error("Failed to decode recent directories: \(error.localizedDescription)")
         }
     }
 
@@ -126,8 +130,9 @@ final class RecentDirectoriesService: @unchecked Sendable {
         do {
             let data = try JSONEncoder().encode(recentDirectories)
             UserDefaults.standard.set(data, forKey: Self.userDefaultsKey)
+            Logger.app.debug("Saved \(recentDirectories.count) recent directories")
         } catch {
-            print("Failed to encode recent directories: \(error)")
+            Logger.app.error("Failed to encode recent directories: \(error.localizedDescription)")
         }
     }
 }

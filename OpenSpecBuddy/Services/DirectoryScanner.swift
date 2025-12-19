@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import OSLog
 
 actor DirectoryScanner {
     enum ScanError: Error {
@@ -13,6 +14,7 @@ actor DirectoryScanner {
     }
 
     func scan(url: URL) async throws -> OpenSpecDirectory {
+        Logger.fileSystem.debug("Scanning directory: \(url.path)")
         let fileManager = FileManager.default
 
         var isDirectory: ObjCBool = false
@@ -30,6 +32,8 @@ actor DirectoryScanner {
         let specs = try await loadSpecs(from: openspecURL)
         let changes = try await loadChanges(from: openspecURL)
         let archivedChanges = try await loadArchivedChanges(from: openspecURL)
+
+        Logger.fileSystem.debug("Scan complete: \(specs.count) specs, \(changes.count) changes, \(archivedChanges.count) archived")
 
         return OpenSpecDirectory(
             url: url,
@@ -52,8 +56,10 @@ actor DirectoryScanner {
     }
 
     private func loadSpecs(from openspecURL: URL) async throws -> [Spec] {
+        Logger.parsing.debug("Loading specs from openspec directory")
         let specsURL = openspecURL.appendingPathComponent("specs")
         guard FileManager.default.fileExists(atPath: specsURL.path) else {
+            Logger.parsing.debug("No specs directory found")
             return []
         }
 
@@ -76,6 +82,7 @@ actor DirectoryScanner {
             let designContent = try? String(contentsOf: designMdURL, encoding: .utf8)
 
             if specContent != nil {
+                Logger.parsing.debug("Loaded spec: \(specId)")
                 specs.append(Spec(
                     id: specId,
                     url: itemURL,
@@ -89,8 +96,10 @@ actor DirectoryScanner {
     }
 
     private func loadChanges(from openspecURL: URL) async throws -> [Change] {
+        Logger.parsing.debug("Loading changes from openspec directory")
         let changesURL = openspecURL.appendingPathComponent("changes")
         guard FileManager.default.fileExists(atPath: changesURL.path) else {
+            Logger.parsing.debug("No changes directory found")
             return []
         }
 
@@ -110,6 +119,7 @@ actor DirectoryScanner {
             if changeId == "archive" { continue }
 
             let change = try await loadChange(id: changeId, from: itemURL)
+            Logger.parsing.debug("Loaded change: \(changeId)")
             changes.append(change)
         }
 
@@ -163,9 +173,11 @@ actor DirectoryScanner {
     }
 
     private func loadArchivedChanges(from openspecURL: URL) async throws -> [ArchivedChange] {
+        Logger.parsing.debug("Loading archived changes")
         // Official OpenSpec location: openspec/changes/archive/
         let archiveURL = openspecURL.appendingPathComponent("changes/archive")
         guard FileManager.default.fileExists(atPath: archiveURL.path) else {
+            Logger.parsing.debug("No archive directory found")
             return []
         }
 
@@ -182,6 +194,7 @@ actor DirectoryScanner {
 
             let changeId = itemURL.lastPathComponent
             let change = try await loadArchivedChange(id: changeId, from: itemURL)
+            Logger.parsing.debug("Loaded archived change: \(changeId)")
             archivedChanges.append(change)
         }
 

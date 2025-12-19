@@ -40,3 +40,26 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 - App uses sandbox with `ENABLE_USER_SELECTED_FILES = readonly` (set in build settings)
 - This allows user-selected directories via NSOpenPanel
 - For persisting access across launches, use security-scoped bookmarks with `URL.bookmarkData()` and `URL(resolvingBookmarkData:)`
+
+## Logging
+
+### Never Use Print Statements
+- **NEVER use `print()` for logging** - always use the unified logging system
+- Use `Logger.category.level("message")` for all logging needs
+- Available categories: `app`, `ui`, `fileSystem`, `parsing`, `navigation`
+- Available levels: `debug`, `info`, `notice`, `error`, `fault`
+
+### Usage Examples
+```swift
+Logger.app.info("Application launched")
+Logger.fileSystem.error("Failed to read directory: \(path)")
+Logger.parsing.debug("Parsing markdown content")
+Logger.navigation.info("Selected item: \(itemName)")
+```
+
+### When to Log
+- App lifecycle events (launch, terminate)
+- Directory operations (open, close, scan)
+- File system errors
+- User actions (copy ID, select item, refresh)
+- Parsing operations
