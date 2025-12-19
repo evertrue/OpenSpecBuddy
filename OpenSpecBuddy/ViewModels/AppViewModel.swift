@@ -15,6 +15,7 @@ final class AppViewModel {
 
     var selectedItem: SidebarItem?
     var isFileImporterPresented = false
+    var isSettingsPresented = false
 
     let recentDirectoriesService: RecentDirectoriesService
     private let scanner: DirectoryScanner
@@ -38,6 +39,16 @@ final class AppViewModel {
     func showDirectoryPicker() {
         Logger.ui.debug("Opening directory picker")
         isFileImporterPresented = true
+    }
+
+    func showSettings() {
+        Logger.ui.debug("Opening settings")
+        isSettingsPresented = true
+    }
+
+    func clearRecentDirectories() {
+        Logger.fileSystem.info("Clearing recent directories")
+        recentDirectoriesService.clearRecent()
     }
 
     func openRecentDirectory(_ recent: RecentDirectory) {

@@ -657,3 +657,50 @@ struct ExtendedLoggingTests {
         #expect(OSLogType.fault.description == "FAULT")
     }
 }
+
+struct AppViewModelSettingsTests {
+
+    @Test @MainActor func showSettingsSetsIsSettingsPresented() async throws {
+        let (testDefaults, suiteName) = makeIsolatedUserDefaults()
+        defer { cleanupUserDefaults(suiteName: suiteName) }
+
+        let service = RecentDirectoriesService(userDefaults: testDefaults)
+        let viewModel = AppViewModel(recentDirectoriesService: service)
+
+        #expect(viewModel.isSettingsPresented == false)
+
+        viewModel.showSettings()
+
+        #expect(viewModel.isSettingsPresented == true)
+    }
+
+    @Test @MainActor func clearRecentDirectoriesClearsService() async throws {
+        let (testDefaults, suiteName) = makeIsolatedUserDefaults()
+        defer { cleanupUserDefaults(suiteName: suiteName) }
+
+        let service = RecentDirectoriesService(userDefaults: testDefaults)
+        let viewModel = AppViewModel(recentDirectoriesService: service)
+
+        // Add some directories
+        let url1 = URL(fileURLWithPath: "/test/project1")
+        let url2 = URL(fileURLWithPath: "/test/project2")
+        service.addRecent(url: url1, name: "Project 1")
+        service.addRecent(url: url2, name: "Project 2")
+
+        #expect(viewModel.recentDirectories.count == 2)
+
+        viewModel.clearRecentDirectories()
+
+        #expect(viewModel.recentDirectories.isEmpty)
+    }
+
+    @Test @MainActor func isSettingsPresentedStartsFalse() async throws {
+        let (testDefaults, suiteName) = makeIsolatedUserDefaults()
+        defer { cleanupUserDefaults(suiteName: suiteName) }
+
+        let service = RecentDirectoriesService(userDefaults: testDefaults)
+        let viewModel = AppViewModel(recentDirectoriesService: service)
+
+        #expect(viewModel.isSettingsPresented == false)
+    }
+}
