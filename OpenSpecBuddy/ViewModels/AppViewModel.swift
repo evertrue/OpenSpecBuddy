@@ -36,22 +36,23 @@ final class AppViewModel {
             return
         }
 
-        let didStart = url.startAccessingSecurityScopedResource()
-        defer {
-            if didStart {
-                url.stopAccessingSecurityScopedResource()
-            }
-        }
-
         Task {
-            await loadDirectory(url: url)
+            await loadDirectory(url: url, fromBookmark: true)
         }
     }
 
-    func loadDirectory(url: URL) async {
+    func loadDirectory(url: URL, fromBookmark: Bool = false) async {
         isLoading = true
         errorMessage = nil
         selectedItem = nil
+
+        // Start security-scoped access - required for both bookmarks and fileImporter URLs
+        let didStartAccess = url.startAccessingSecurityScopedResource()
+        defer {
+            if didStartAccess {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
 
         do {
             let directory = try await scanner.scan(url: url)
