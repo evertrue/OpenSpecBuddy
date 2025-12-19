@@ -5,6 +5,7 @@
 
 import SwiftUI
 import Markdown
+import OSLog
 
 struct MarkdownView: View {
     let content: String
@@ -24,6 +25,7 @@ struct MarkdownContent: View {
     let content: String
 
     var body: some View {
+        let _ = Logger.parsing.debug("Parsing markdown content (\(content.count) characters)")
         let document = Document(parsing: content)
         MarkdownBlockSequence(blocks: Array(document.blockChildren))
     }

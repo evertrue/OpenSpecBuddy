@@ -5,6 +5,7 @@
 
 import SwiftUI
 import AppKit
+import OSLog
 
 struct ChangeContextHeader: View {
     let changeId: String
@@ -48,6 +49,7 @@ struct ChangeContextHeader: View {
     }
 
     private func copyToClipboard() {
+        Logger.ui.info("Copying change ID to clipboard: \(changeId)")
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(changeId, forType: .string)

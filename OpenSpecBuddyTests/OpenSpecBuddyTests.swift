@@ -7,6 +7,7 @@
 
 import Testing
 import Foundation
+import OSLog
 @testable import OpenSpecBuddy
 
 struct ModelTests {
@@ -57,6 +58,38 @@ struct ModelTests {
 
         #expect(specItem.content == "# Auth Spec")
         #expect(designItem.content == "# Design")
+    }
+}
+
+struct LoggingTests {
+
+    @Test func logCategoryHasCorrectSubsystem() async throws {
+        let category = LogCategory.app
+        #expect(category.subsystem.contains("openspecbuddy") || category.subsystem.contains("OpenSpecBuddy"))
+    }
+
+    @Test func allLogCategoriesHaveRawValues() async throws {
+        for category in LogCategory.allCases {
+            #expect(!category.rawValue.isEmpty)
+        }
+    }
+
+    @Test func categorizedLoggerInitializes() async throws {
+        let logger = CategorizedLogger(category: .app)
+        #expect(logger.category == .app)
+    }
+
+    @Test func loggerExtensionProvidesStaticAccessors() async throws {
+        #expect(Logger.app.category == .app)
+        #expect(Logger.ui.category == .ui)
+        #expect(Logger.fileSystem.category == .fileSystem)
+        #expect(Logger.parsing.category == .parsing)
+        #expect(Logger.navigation.category == .navigation)
+    }
+
+    @Test func loggerForCategoryReturnsCorrectLogger() async throws {
+        let logger = Logger.for(.parsing)
+        #expect(logger.category == .parsing)
     }
 }
 

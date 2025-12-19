@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import OSLog
 
 struct DetailView: View {
     @Environment(AppViewModel.self) private var viewModel
@@ -34,5 +35,10 @@ struct DetailView: View {
             }
         }
         .frame(minWidth: 400)
+        .onChange(of: viewModel.selectedItem) { oldValue, newValue in
+            if let item = newValue {
+                Logger.navigation.info("Selected: \(item.displayName)")
+            }
+        }
     }
 }
