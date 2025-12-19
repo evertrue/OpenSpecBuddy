@@ -33,11 +33,24 @@ struct SidebarView: View {
 
 struct SpecsSection: View {
     let specs: [Spec]
+    @Environment(AppViewModel.self) private var viewModel
+    @State private var expandedSpecs: Set<String> = []
 
     var body: some View {
         Section("Specs") {
             ForEach(specs) { spec in
-                DisclosureGroup {
+                DisclosureGroup(
+                    isExpanded: Binding(
+                        get: { expandedSpecs.contains(spec.id) },
+                        set: { isExpanded in
+                            if isExpanded {
+                                expandedSpecs.insert(spec.id)
+                            } else {
+                                expandedSpecs.remove(spec.id)
+                            }
+                        }
+                    )
+                ) {
                     NavigationLink(value: SidebarItem.spec(spec, file: .spec)) {
                         Label("spec.md", systemImage: "doc.text")
                     }
@@ -48,6 +61,11 @@ struct SpecsSection: View {
                     }
                 } label: {
                     Label(spec.displayName, systemImage: "book.closed")
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            expandedSpecs.insert(spec.id)
+                            viewModel.selectedItem = .spec(spec, file: .spec)
+                        }
                 }
             }
         }
@@ -56,11 +74,24 @@ struct SpecsSection: View {
 
 struct ChangesSection: View {
     let changes: [Change]
+    @Environment(AppViewModel.self) private var viewModel
+    @State private var expandedChanges: Set<String> = []
 
     var body: some View {
         Section("Changes") {
             ForEach(changes) { change in
-                DisclosureGroup {
+                DisclosureGroup(
+                    isExpanded: Binding(
+                        get: { expandedChanges.contains(change.id) },
+                        set: { isExpanded in
+                            if isExpanded {
+                                expandedChanges.insert(change.id)
+                            } else {
+                                expandedChanges.remove(change.id)
+                            }
+                        }
+                    )
+                ) {
                     if change.proposal != nil {
                         NavigationLink(value: SidebarItem.change(change, file: .proposal)) {
                             Label("proposal.md", systemImage: "doc.text")
@@ -83,6 +114,14 @@ struct ChangesSection: View {
                     }
                 } label: {
                     Label(change.displayName, systemImage: "pencil.and.outline")
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            expandedChanges.insert(change.id)
+                            // Select proposal as the default file for changes
+                            if change.proposal != nil {
+                                viewModel.selectedItem = .change(change, file: .proposal)
+                            }
+                        }
                 }
             }
         }
@@ -91,11 +130,24 @@ struct ChangesSection: View {
 
 struct ArchiveSection: View {
     let archivedChanges: [ArchivedChange]
+    @Environment(AppViewModel.self) private var viewModel
+    @State private var expandedArchived: Set<String> = []
 
     var body: some View {
         Section("Archive") {
             ForEach(archivedChanges) { archived in
-                DisclosureGroup {
+                DisclosureGroup(
+                    isExpanded: Binding(
+                        get: { expandedArchived.contains(archived.id) },
+                        set: { isExpanded in
+                            if isExpanded {
+                                expandedArchived.insert(archived.id)
+                            } else {
+                                expandedArchived.remove(archived.id)
+                            }
+                        }
+                    )
+                ) {
                     if archived.proposal != nil {
                         NavigationLink(value: SidebarItem.archivedChange(archived, file: .proposal)) {
                             Label("proposal.md", systemImage: "doc.text")
@@ -118,6 +170,14 @@ struct ArchiveSection: View {
                     }
                 } label: {
                     Label(archived.displayName, systemImage: "archivebox")
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            expandedArchived.insert(archived.id)
+                            // Select proposal as the default file for archived changes
+                            if archived.proposal != nil {
+                                viewModel.selectedItem = .archivedChange(archived, file: .proposal)
+                            }
+                        }
                 }
             }
         }
