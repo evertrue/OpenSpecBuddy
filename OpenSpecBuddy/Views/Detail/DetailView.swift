@@ -12,7 +12,12 @@ struct DetailView: View {
         Group {
             if let selectedItem = viewModel.selectedItem {
                 if let content = selectedItem.content {
-                    MarkdownView(content: content)
+                    VStack(spacing: 0) {
+                        if let changeId = selectedItem.changeId {
+                            ChangeContextHeader(changeId: changeId)
+                        }
+                        MarkdownView(content: content)
+                    }
                 } else {
                     ContentUnavailableView(
                         "No Content",

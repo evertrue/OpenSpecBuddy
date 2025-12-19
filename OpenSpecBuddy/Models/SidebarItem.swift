@@ -57,6 +57,17 @@ enum SidebarItem: Hashable, Identifiable {
             }
         }
     }
+
+    var changeId: String? {
+        switch self {
+        case .spec:
+            return nil
+        case .change(let change, _):
+            return change.id
+        case .archivedChange(let archived, _):
+            return archived.id
+        }
+    }
 }
 
 enum SpecFile: Hashable {
