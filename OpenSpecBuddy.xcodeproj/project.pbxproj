@@ -25,9 +25,22 @@
 		8E0E54F92EF583330082B4F5 /* OpenSpecBuddyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenSpecBuddyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8E63B6C62EF5E1FB0081D28E /* Exceptions for "OpenSpecBuddy" folder in "OpenSpecBuddy" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8E0E54EB2EF583310082B4F5 /* OpenSpecBuddy */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8E0E54EE2EF583310082B4F5 /* OpenSpecBuddy */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8E63B6C62EF5E1FB0081D28E /* Exceptions for "OpenSpecBuddy" folder in "OpenSpecBuddy" target */,
+			);
 			path = OpenSpecBuddy;
 			sourceTree = "<group>";
 		};
@@ -343,6 +356,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OpenSpecBuddy/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -376,6 +391,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OpenSpecBuddy/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
