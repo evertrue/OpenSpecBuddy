@@ -63,3 +63,11 @@ Logger.navigation.info("Selected item: \(itemName)")
 - File system errors
 - User actions (copy ID, select item, refresh)
 - Parsing operations
+
+## Testing
+
+### No UI Tests
+- **UI tests have been removed** from this project
+- Focus on **unit tests only** for now
+- Unit tests are in the `OpenSpecBuddyTests` target
+- Aim to maximize unit test coverage for business logic and parsing

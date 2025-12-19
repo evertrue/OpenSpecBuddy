@@ -18,19 +18,11 @@
 			remoteGlobalIDString = 8E0E54EB2EF583310082B4F5;
 			remoteInfo = OpenSpecBuddy;
 		};
-		8E0E55042EF583330082B4F5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8E0E54E42EF583310082B4F5 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8E0E54EB2EF583310082B4F5;
-			remoteInfo = OpenSpecBuddy;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		8E0E54EC2EF583310082B4F5 /* OpenSpecBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenSpecBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E0E54F92EF583330082B4F5 /* OpenSpecBuddyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenSpecBuddyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		8E0E55032EF583330082B4F5 /* OpenSpecBuddyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenSpecBuddyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -42,11 +34,6 @@
 		8E0E54FC2EF583330082B4F5 /* OpenSpecBuddyTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = OpenSpecBuddyTests;
-			sourceTree = "<group>";
-		};
-		8E0E55062EF583330082B4F5 /* OpenSpecBuddyUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = OpenSpecBuddyUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -67,13 +54,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8E0E55002EF583330082B4F5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -82,7 +62,6 @@
 			children = (
 				8E0E54EE2EF583310082B4F5 /* OpenSpecBuddy */,
 				8E0E54FC2EF583330082B4F5 /* OpenSpecBuddyTests */,
-				8E0E55062EF583330082B4F5 /* OpenSpecBuddyUITests */,
 				8E0E54ED2EF583310082B4F5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -92,7 +71,6 @@
 			children = (
 				8E0E54EC2EF583310082B4F5 /* OpenSpecBuddy.app */,
 				8E0E54F92EF583330082B4F5 /* OpenSpecBuddyTests.xctest */,
-				8E0E55032EF583330082B4F5 /* OpenSpecBuddyUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -146,29 +124,6 @@
 			productReference = 8E0E54F92EF583330082B4F5 /* OpenSpecBuddyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		8E0E55022EF583330082B4F5 /* OpenSpecBuddyUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8E0E55132EF583330082B4F5 /* Build configuration list for PBXNativeTarget "OpenSpecBuddyUITests" */;
-			buildPhases = (
-				8E0E54FF2EF583330082B4F5 /* Sources */,
-				8E0E55002EF583330082B4F5 /* Frameworks */,
-				8E0E55012EF583330082B4F5 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				8E0E55052EF583330082B4F5 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				8E0E55062EF583330082B4F5 /* OpenSpecBuddyUITests */,
-			);
-			name = OpenSpecBuddyUITests;
-			packageProductDependencies = (
-			);
-			productName = OpenSpecBuddyUITests;
-			productReference = 8E0E55032EF583330082B4F5 /* OpenSpecBuddyUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -183,10 +138,6 @@
 						CreatedOnToolsVersion = 26.0;
 					};
 					8E0E54F82EF583330082B4F5 = {
-						CreatedOnToolsVersion = 26.0;
-						TestTargetID = 8E0E54EB2EF583310082B4F5;
-					};
-					8E0E55022EF583330082B4F5 = {
 						CreatedOnToolsVersion = 26.0;
 						TestTargetID = 8E0E54EB2EF583310082B4F5;
 					};
@@ -211,7 +162,6 @@
 			targets = (
 				8E0E54EB2EF583310082B4F5 /* OpenSpecBuddy */,
 				8E0E54F82EF583330082B4F5 /* OpenSpecBuddyTests */,
-				8E0E55022EF583330082B4F5 /* OpenSpecBuddyUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -225,13 +175,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8E0E54F72EF583330082B4F5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8E0E55012EF583330082B4F5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -255,13 +198,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8E0E54FF2EF583330082B4F5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -269,11 +205,6 @@
 			isa = PBXTargetDependency;
 			target = 8E0E54EB2EF583310082B4F5 /* OpenSpecBuddy */;
 			targetProxy = 8E0E54FA2EF583330082B4F5 /* PBXContainerItemProxy */;
-		};
-		8E0E55052EF583330082B4F5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8E0E54EB2EF583310082B4F5 /* OpenSpecBuddy */;
-			targetProxy = 8E0E55042EF583330082B4F5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -506,44 +437,6 @@
 			};
 			name = Release;
 		};
-		8E0E55142EF583330082B4F5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7ZF63W3C7X;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.evertrue.OpenSpecBuddyUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = OpenSpecBuddy;
-			};
-			name = Debug;
-		};
-		8E0E55152EF583330082B4F5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7ZF63W3C7X;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.evertrue.OpenSpecBuddyUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = OpenSpecBuddy;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -570,15 +463,6 @@
 			buildConfigurations = (
 				8E0E55112EF583330082B4F5 /* Debug */,
 				8E0E55122EF583330082B4F5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		8E0E55132EF583330082B4F5 /* Build configuration list for PBXNativeTarget "OpenSpecBuddyUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8E0E55142EF583330082B4F5 /* Debug */,
-				8E0E55152EF583330082B4F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
