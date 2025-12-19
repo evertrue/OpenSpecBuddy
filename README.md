@@ -17,7 +17,9 @@ A native macOS viewer for [OpenSpec](https://github.com/Fission-AI/OpenSpec) pro
 
 ## 📸 Screenshot
 
-*Coming soon*
+<p align="center">
+  <img src="docs/screenshot.png" alt="OpenSpec Buddy screenshot" width="700">
+</p>
 
 ## 🚀 Getting Started
 
