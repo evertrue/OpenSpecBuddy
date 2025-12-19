@@ -16,8 +16,16 @@ final class AppViewModel {
     var selectedItem: SidebarItem?
     var isFileImporterPresented = false
 
-    let recentDirectoriesService = RecentDirectoriesService()
-    private let scanner = DirectoryScanner()
+    let recentDirectoriesService: RecentDirectoriesService
+    private let scanner: DirectoryScanner
+
+    init(
+        recentDirectoriesService: RecentDirectoriesService = RecentDirectoriesService(),
+        scanner: DirectoryScanner = DirectoryScanner()
+    ) {
+        self.recentDirectoriesService = recentDirectoriesService
+        self.scanner = scanner
+    }
 
     var hasDirectory: Bool {
         currentDirectory != nil

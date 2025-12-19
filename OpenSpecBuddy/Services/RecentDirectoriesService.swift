@@ -23,9 +23,11 @@ final class RecentDirectoriesService: @unchecked Sendable {
     private static let maxRecent = 10
     private static let userDefaultsKey = "recentDirectories"
 
+    private let userDefaults: UserDefaults
     private(set) var recentDirectories: [RecentDirectory] = []
 
-    init() {
+    init(userDefaults: UserDefaults = .standard) {
+        self.userDefaults = userDefaults
         loadRecent()
     }
 
@@ -113,7 +115,7 @@ final class RecentDirectoriesService: @unchecked Sendable {
     }
 
     private func loadRecent() {
-        guard let data = UserDefaults.standard.data(forKey: Self.userDefaultsKey) else {
+        guard let data = userDefaults.data(forKey: Self.userDefaultsKey) else {
             Logger.app.debug("No recent directories found in UserDefaults")
             return
         }
@@ -129,7 +131,7 @@ final class RecentDirectoriesService: @unchecked Sendable {
     private func saveRecent() {
         do {
             let data = try JSONEncoder().encode(recentDirectories)
-            UserDefaults.standard.set(data, forKey: Self.userDefaultsKey)
+            userDefaults.set(data, forKey: Self.userDefaultsKey)
             Logger.app.debug("Saved \(recentDirectories.count) recent directories")
         } catch {
             Logger.app.error("Failed to encode recent directories: \(error.localizedDescription)")

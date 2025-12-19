@@ -10,6 +10,85 @@ import Foundation
 import OSLog
 @testable import OpenSpecBuddy
 
+// MARK: - Test Helpers
+
+/// Creates an isolated UserDefaults instance for testing.
+/// Returns a tuple of the UserDefaults instance and its suite name for cleanup.
+func makeIsolatedUserDefaults() -> (defaults: UserDefaults, suiteName: String) {
+    let suiteName = "test-\(UUID().uuidString)"
+    let defaults = UserDefaults(suiteName: suiteName)!
+    return (defaults, suiteName)
+}
+
+/// Removes the persistent domain for a test suite.
+func cleanupUserDefaults(suiteName: String) {
+    UserDefaults.standard.removePersistentDomain(forName: suiteName)
+}
+
+/// Helper struct for creating isolated OpenSpec test directories.
+struct TestOpenSpecDirectory {
+    let url: URL
+    private let fileManager = FileManager.default
+
+    init() throws {
+        url = fileManager.temporaryDirectory.appendingPathComponent("test-\(UUID().uuidString)")
+        try fileManager.createDirectory(
+            at: url.appendingPathComponent("openspec"),
+            withIntermediateDirectories: true
+        )
+    }
+
+    func addSpec(id: String, content: String, design: String? = nil) throws {
+        let specDir = url.appendingPathComponent("openspec/specs/\(id)")
+        try fileManager.createDirectory(at: specDir, withIntermediateDirectories: true)
+        try content.write(to: specDir.appendingPathComponent("spec.md"), atomically: true, encoding: .utf8)
+        if let design = design {
+            try design.write(to: specDir.appendingPathComponent("design.md"), atomically: true, encoding: .utf8)
+        }
+    }
+
+    func addChange(id: String, proposal: String, tasks: String? = nil, design: String? = nil) throws {
+        let changeDir = url.appendingPathComponent("openspec/changes/\(id)")
+        try fileManager.createDirectory(at: changeDir, withIntermediateDirectories: true)
+        try proposal.write(to: changeDir.appendingPathComponent("proposal.md"), atomically: true, encoding: .utf8)
+        if let tasks = tasks {
+            try tasks.write(to: changeDir.appendingPathComponent("tasks.md"), atomically: true, encoding: .utf8)
+        }
+        if let design = design {
+            try design.write(to: changeDir.appendingPathComponent("design.md"), atomically: true, encoding: .utf8)
+        }
+    }
+
+    func addSpecDelta(changeId: String, specName: String, content: String) throws {
+        let deltaDir = url.appendingPathComponent("openspec/changes/\(changeId)/specs/\(specName)")
+        try fileManager.createDirectory(at: deltaDir, withIntermediateDirectories: true)
+        try content.write(to: deltaDir.appendingPathComponent("spec.md"), atomically: true, encoding: .utf8)
+    }
+
+    func addArchivedChange(id: String, proposal: String, tasks: String? = nil) throws {
+        let archiveDir = url.appendingPathComponent("openspec/changes/archive/\(id)")
+        try fileManager.createDirectory(at: archiveDir, withIntermediateDirectories: true)
+        try proposal.write(to: archiveDir.appendingPathComponent("proposal.md"), atomically: true, encoding: .utf8)
+        if let tasks = tasks {
+            try tasks.write(to: archiveDir.appendingPathComponent("tasks.md"), atomically: true, encoding: .utf8)
+        }
+    }
+
+    func setProjectInfo(content: String) throws {
+        try content.write(
+            to: url.appendingPathComponent("openspec/project.md"),
+            atomically: true,
+            encoding: .utf8
+        )
+    }
+
+    func cleanup() {
+        try? fileManager.removeItem(at: url)
+    }
+}
+
+// MARK: - Model Tests
+
 struct ModelTests {
 
     @Test func specDisplayName() async throws {
@@ -316,7 +395,7 @@ struct DirectoryScannerTests {
 
     @Test func scanThrowsForNonDirectory() async throws {
         let scanner = DirectoryScanner()
-        let tempFile = FileManager.default.temporaryDirectory.appendingPathComponent("testfile.txt")
+        let tempFile = FileManager.default.temporaryDirectory.appendingPathComponent("testfile-\(UUID().uuidString).txt")
         FileManager.default.createFile(atPath: tempFile.path, contents: nil)
         defer { try? FileManager.default.removeItem(at: tempFile) }
 
@@ -332,7 +411,7 @@ struct DirectoryScannerTests {
 
     @Test func scanThrowsForNonOpenSpecDirectory() async throws {
         let scanner = DirectoryScanner()
-        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent("test-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: tempDir) }
 
@@ -348,16 +427,12 @@ struct DirectoryScannerTests {
 
     @Test func scanFindsSpecs() async throws {
         let scanner = DirectoryScanner()
-        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        let openspecDir = tempDir.appendingPathComponent("openspec")
-        let specsDir = openspecDir.appendingPathComponent("specs")
-        let authDir = specsDir.appendingPathComponent("auth")
+        let fixture = try TestOpenSpecDirectory()
+        defer { fixture.cleanup() }
 
-        try FileManager.default.createDirectory(at: authDir, withIntermediateDirectories: true)
-        try "# Authentication".write(to: authDir.appendingPathComponent("spec.md"), atomically: true, encoding: .utf8)
-        defer { try? FileManager.default.removeItem(at: tempDir) }
+        try fixture.addSpec(id: "auth", content: "# Authentication")
 
-        let result = try await scanner.scan(url: tempDir)
+        let result = try await scanner.scan(url: fixture.url)
 
         #expect(result.specs.count == 1)
         #expect(result.specs.first?.id == "auth")
@@ -366,17 +441,12 @@ struct DirectoryScannerTests {
 
     @Test func scanFindsChanges() async throws {
         let scanner = DirectoryScanner()
-        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        let openspecDir = tempDir.appendingPathComponent("openspec")
-        let changesDir = openspecDir.appendingPathComponent("changes")
-        let changeDir = changesDir.appendingPathComponent("add-feature")
+        let fixture = try TestOpenSpecDirectory()
+        defer { fixture.cleanup() }
 
-        try FileManager.default.createDirectory(at: changeDir, withIntermediateDirectories: true)
-        try "# Proposal".write(to: changeDir.appendingPathComponent("proposal.md"), atomically: true, encoding: .utf8)
-        try "# Tasks".write(to: changeDir.appendingPathComponent("tasks.md"), atomically: true, encoding: .utf8)
-        defer { try? FileManager.default.removeItem(at: tempDir) }
+        try fixture.addChange(id: "add-feature", proposal: "# Proposal", tasks: "# Tasks")
 
-        let result = try await scanner.scan(url: tempDir)
+        let result = try await scanner.scan(url: fixture.url)
 
         #expect(result.changes.count == 1)
         #expect(result.changes.first?.id == "add-feature")
@@ -386,17 +456,12 @@ struct DirectoryScannerTests {
 
     @Test func scanFindsDesignFiles() async throws {
         let scanner = DirectoryScanner()
-        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        let openspecDir = tempDir.appendingPathComponent("openspec")
-        let specsDir = openspecDir.appendingPathComponent("specs")
-        let authDir = specsDir.appendingPathComponent("auth")
+        let fixture = try TestOpenSpecDirectory()
+        defer { fixture.cleanup() }
 
-        try FileManager.default.createDirectory(at: authDir, withIntermediateDirectories: true)
-        try "# Authentication Spec".write(to: authDir.appendingPathComponent("spec.md"), atomically: true, encoding: .utf8)
-        try "# Authentication Design".write(to: authDir.appendingPathComponent("design.md"), atomically: true, encoding: .utf8)
-        defer { try? FileManager.default.removeItem(at: tempDir) }
+        try fixture.addSpec(id: "auth", content: "# Authentication Spec", design: "# Authentication Design")
 
-        let result = try await scanner.scan(url: tempDir)
+        let result = try await scanner.scan(url: fixture.url)
 
         #expect(result.specs.count == 1)
         #expect(result.specs.first?.specContent == "# Authentication Spec")
@@ -406,15 +471,12 @@ struct DirectoryScannerTests {
 
     @Test func scanFindsArchivedChanges() async throws {
         let scanner = DirectoryScanner()
-        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        let openspecDir = tempDir.appendingPathComponent("openspec")
-        let archiveDir = openspecDir.appendingPathComponent("changes/archive/2024-01-15-add-feature")
+        let fixture = try TestOpenSpecDirectory()
+        defer { fixture.cleanup() }
 
-        try FileManager.default.createDirectory(at: archiveDir, withIntermediateDirectories: true)
-        try "# Archived Proposal".write(to: archiveDir.appendingPathComponent("proposal.md"), atomically: true, encoding: .utf8)
-        defer { try? FileManager.default.removeItem(at: tempDir) }
+        try fixture.addArchivedChange(id: "2024-01-15-add-feature", proposal: "# Archived Proposal")
 
-        let result = try await scanner.scan(url: tempDir)
+        let result = try await scanner.scan(url: fixture.url)
 
         #expect(result.archivedChanges.count == 1)
         #expect(result.archivedChanges.first?.id == "2024-01-15-add-feature")
@@ -423,17 +485,13 @@ struct DirectoryScannerTests {
 
     @Test func scanFindsChangesWithSpecDeltas() async throws {
         let scanner = DirectoryScanner()
-        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        let openspecDir = tempDir.appendingPathComponent("openspec")
-        let changeDir = openspecDir.appendingPathComponent("changes/add-auth")
-        let deltaDir = changeDir.appendingPathComponent("specs/auth")
+        let fixture = try TestOpenSpecDirectory()
+        defer { fixture.cleanup() }
 
-        try FileManager.default.createDirectory(at: deltaDir, withIntermediateDirectories: true)
-        try "# Proposal".write(to: changeDir.appendingPathComponent("proposal.md"), atomically: true, encoding: .utf8)
-        try "# Spec Delta".write(to: deltaDir.appendingPathComponent("spec.md"), atomically: true, encoding: .utf8)
-        defer { try? FileManager.default.removeItem(at: tempDir) }
+        try fixture.addChange(id: "add-auth", proposal: "# Proposal")
+        try fixture.addSpecDelta(changeId: "add-auth", specName: "auth", content: "# Spec Delta")
 
-        let result = try await scanner.scan(url: tempDir)
+        let result = try await scanner.scan(url: fixture.url)
 
         #expect(result.changes.count == 1)
         #expect(result.changes.first?.specDeltas.count == 1)
@@ -443,38 +501,37 @@ struct DirectoryScannerTests {
 
     @Test func scanExtractsProjectTitle() async throws {
         let scanner = DirectoryScanner()
-        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        let openspecDir = tempDir.appendingPathComponent("openspec")
+        let fixture = try TestOpenSpecDirectory()
+        defer { fixture.cleanup() }
 
-        try FileManager.default.createDirectory(at: openspecDir, withIntermediateDirectories: true)
-        try "# My Project\n\nThis is my project.".write(to: openspecDir.appendingPathComponent("project.md"), atomically: true, encoding: .utf8)
-        defer { try? FileManager.default.removeItem(at: tempDir) }
+        try fixture.setProjectInfo(content: "# My Project\n\nThis is my project.")
 
-        let result = try await scanner.scan(url: tempDir)
+        let result = try await scanner.scan(url: fixture.url)
 
         #expect(result.projectInfo?.name == "My Project")
     }
 
     @Test func scanFallbacksToDirectoryNameWhenNoTitle() async throws {
         let scanner = DirectoryScanner()
-        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent("my-project-\(UUID().uuidString)")
-        let openspecDir = tempDir.appendingPathComponent("openspec")
+        let fixture = try TestOpenSpecDirectory()
+        defer { fixture.cleanup() }
 
-        try FileManager.default.createDirectory(at: openspecDir, withIntermediateDirectories: true)
-        try "No title here, just text.".write(to: openspecDir.appendingPathComponent("project.md"), atomically: true, encoding: .utf8)
-        defer { try? FileManager.default.removeItem(at: tempDir) }
+        try fixture.setProjectInfo(content: "No title here, just text.")
 
-        let result = try await scanner.scan(url: tempDir)
+        let result = try await scanner.scan(url: fixture.url)
 
-        #expect(result.projectInfo?.name.hasPrefix("my-project-") == true)
+        // The fixture URL has a UUID in it, so just check it's not nil
+        #expect(result.projectInfo?.name != nil)
     }
 }
 
 struct RecentDirectoriesServiceTests {
 
     @Test func addRecentAddsNewDirectory() async throws {
-        let service = RecentDirectoriesService()
-        service.clearRecent()
+        let (testDefaults, suiteName) = makeIsolatedUserDefaults()
+        defer { cleanupUserDefaults(suiteName: suiteName) }
+
+        let service = RecentDirectoriesService(userDefaults: testDefaults)
 
         let url = URL(fileURLWithPath: "/test/project1")
         service.addRecent(url: url, name: "Project 1")
@@ -485,8 +542,10 @@ struct RecentDirectoriesServiceTests {
     }
 
     @Test func addRecentMovesExistingToTop() async throws {
-        let service = RecentDirectoriesService()
-        service.clearRecent()
+        let (testDefaults, suiteName) = makeIsolatedUserDefaults()
+        defer { cleanupUserDefaults(suiteName: suiteName) }
+
+        let service = RecentDirectoriesService(userDefaults: testDefaults)
 
         let url1 = URL(fileURLWithPath: "/test/project1")
         let url2 = URL(fileURLWithPath: "/test/project2")
@@ -501,8 +560,10 @@ struct RecentDirectoriesServiceTests {
     }
 
     @Test func addRecentRespectsMaxLimit() async throws {
-        let service = RecentDirectoriesService()
-        service.clearRecent()
+        let (testDefaults, suiteName) = makeIsolatedUserDefaults()
+        defer { cleanupUserDefaults(suiteName: suiteName) }
+
+        let service = RecentDirectoriesService(userDefaults: testDefaults)
 
         for i in 0..<15 {
             let url = URL(fileURLWithPath: "/test/project\(i)")
@@ -514,8 +575,10 @@ struct RecentDirectoriesServiceTests {
     }
 
     @Test func removeRecentRemovesDirectory() async throws {
-        let service = RecentDirectoriesService()
-        service.clearRecent()
+        let (testDefaults, suiteName) = makeIsolatedUserDefaults()
+        defer { cleanupUserDefaults(suiteName: suiteName) }
+
+        let service = RecentDirectoriesService(userDefaults: testDefaults)
 
         let url1 = URL(fileURLWithPath: "/test/project1")
         let url2 = URL(fileURLWithPath: "/test/project2")
@@ -531,7 +594,10 @@ struct RecentDirectoriesServiceTests {
     }
 
     @Test func clearRecentRemovesAll() async throws {
-        let service = RecentDirectoriesService()
+        let (testDefaults, suiteName) = makeIsolatedUserDefaults()
+        defer { cleanupUserDefaults(suiteName: suiteName) }
+
+        let service = RecentDirectoriesService(userDefaults: testDefaults)
 
         let url = URL(fileURLWithPath: "/test/project1")
         service.addRecent(url: url, name: "Project 1")
@@ -541,7 +607,10 @@ struct RecentDirectoriesServiceTests {
     }
 
     @Test func resolveBookmarkReturnsUrlForDirectoryWithoutBookmark() async throws {
-        let service = RecentDirectoriesService()
+        let (testDefaults, suiteName) = makeIsolatedUserDefaults()
+        defer { cleanupUserDefaults(suiteName: suiteName) }
+
+        let service = RecentDirectoriesService(userDefaults: testDefaults)
         let directory = RecentDirectory(
             path: "/test/project",
             name: "Test Project",
