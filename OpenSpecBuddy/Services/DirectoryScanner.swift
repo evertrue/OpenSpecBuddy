@@ -105,7 +105,10 @@ actor DirectoryScanner {
             let resourceValues = try itemURL.resourceValues(forKeys: [.isDirectoryKey])
             guard resourceValues.isDirectory == true else { continue }
 
+            // Skip the archive folder - it's handled separately
             let changeId = itemURL.lastPathComponent
+            if changeId == "archive" { continue }
+
             let change = try await loadChange(id: changeId, from: itemURL)
             changes.append(change)
         }
@@ -160,7 +163,8 @@ actor DirectoryScanner {
     }
 
     private func loadArchivedChanges(from openspecURL: URL) async throws -> [ArchivedChange] {
-        let archiveURL = openspecURL.appendingPathComponent("archive")
+        // Official OpenSpec location: openspec/changes/archive/
+        let archiveURL = openspecURL.appendingPathComponent("changes/archive")
         guard FileManager.default.fileExists(atPath: archiveURL.path) else {
             return []
         }
