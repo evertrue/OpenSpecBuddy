@@ -63,8 +63,12 @@ struct SpecsSection: View {
                     Label(spec.displayName, systemImage: "book.closed")
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            expandedSpecs.insert(spec.id)
-                            viewModel.selectedItem = .spec(spec, file: .spec)
+                            if expandedSpecs.contains(spec.id) {
+                                expandedSpecs.remove(spec.id)
+                            } else {
+                                expandedSpecs.insert(spec.id)
+                                viewModel.selectedItem = .spec(spec, file: .spec)
+                            }
                         }
                 }
             }
@@ -116,10 +120,14 @@ struct ChangesSection: View {
                     Label(change.displayName, systemImage: "pencil.and.outline")
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            expandedChanges.insert(change.id)
-                            // Select proposal as the default file for changes
-                            if change.proposal != nil {
-                                viewModel.selectedItem = .change(change, file: .proposal)
+                            if expandedChanges.contains(change.id) {
+                                expandedChanges.remove(change.id)
+                            } else {
+                                expandedChanges.insert(change.id)
+                                // Select proposal as the default file for changes
+                                if change.proposal != nil {
+                                    viewModel.selectedItem = .change(change, file: .proposal)
+                                }
                             }
                         }
                 }
@@ -172,10 +180,14 @@ struct ArchiveSection: View {
                     Label(archived.displayName, systemImage: "archivebox")
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            expandedArchived.insert(archived.id)
-                            // Select proposal as the default file for archived changes
-                            if archived.proposal != nil {
-                                viewModel.selectedItem = .archivedChange(archived, file: .proposal)
+                            if expandedArchived.contains(archived.id) {
+                                expandedArchived.remove(archived.id)
+                            } else {
+                                expandedArchived.insert(archived.id)
+                                // Select proposal as the default file for archived changes
+                                if archived.proposal != nil {
+                                    viewModel.selectedItem = .archivedChange(archived, file: .proposal)
+                                }
                             }
                         }
                 }
