@@ -52,12 +52,23 @@ The system SHALL display all active changes from the `openspec/changes/` directo
 - **AND** user can select individual delta files
 
 ### Requirement: Archive Section
-The system SHALL display all archived changes from the `openspec/changes/archive/` directory.
+The system SHALL display all archived changes from the `openspec/changes/archive/` directory with parsed, human-readable labels.
 
 #### Scenario: Archives listed by date and name
 - **WHEN** OpenSpec directory contains archived changes
 - **THEN** sidebar displays "Archive" section with archived changes
-- **AND** items show the archive folder name (e.g., 2024-01-15-add-auth)
+- **AND** each item shows the change name in human-readable format (e.g., "Add Initial Viewer")
+- **AND** each item shows the archive date as a styled tag/badge
+
+#### Scenario: Archive date displayed as tag
+- **WHEN** an archived change folder follows YYYY-MM-DD-name format
+- **THEN** the date portion is displayed as a visually distinct secondary element
+- **AND** the date is formatted in a readable style (e.g., "Dec 19, 2025")
+
+#### Scenario: Archive without date prefix
+- **WHEN** an archived change folder does not follow YYYY-MM-DD prefix pattern
+- **THEN** system displays the folder name using the existing fallback formatting
+- **AND** no date tag is shown
 
 #### Scenario: User browses archive
 - **WHEN** user expands an archived change
