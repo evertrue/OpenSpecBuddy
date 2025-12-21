@@ -1,10 +1,4 @@
-# 🔍 OpenSpec Buddy
-
-<p align="center">
-  <a href="https://testflight.apple.com/join/9eykNRqF">
-    <img src="https://img.shields.io/badge/TestFlight-Join_Beta-0D96F6?style=for-the-badge&logo=apple&logoColor=white" alt="Join TestFlight Beta">
-  </a>
-</p>
+<h1>🔍 OpenSpec Buddy <a href="https://testflight.apple.com/join/9eykNRqF"><img src="https://img.shields.io/badge/TestFlight-Join_Beta-0D96F6?style=for-the-badge&logo=apple&logoColor=white" alt="Join TestFlight Beta"></a></h1>
 
 ![macOS](https://img.shields.io/badge/macOS-15.0%2B-blue?logo=apple)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-5.0-orange?logo=swift)
