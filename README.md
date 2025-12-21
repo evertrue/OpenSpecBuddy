@@ -1,5 +1,11 @@
 # 🔍 OpenSpec Buddy
 
+<p align="center">
+  <a href="https://testflight.apple.com/join/9eykNRqF">
+    <img src="https://img.shields.io/badge/TestFlight-Join_Beta-0D96F6?style=for-the-badge&logo=apple&logoColor=white" alt="Join TestFlight Beta">
+  </a>
+</p>
+
 ![macOS](https://img.shields.io/badge/macOS-15.0%2B-blue?logo=apple)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-5.0-orange?logo=swift)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -22,6 +28,10 @@ A native macOS viewer for [OpenSpec](https://github.com/Fission-AI/OpenSpec) pro
 </p>
 
 ## 🚀 Getting Started
+
+**Just want to use the app?** Download it via [TestFlight](https://testflight.apple.com/join/9eykNRqF) — no Xcode required.
+
+**Want to build from source?**
 
 1. Clone the repo
 2. Open `OpenSpecBuddy.xcodeproj` in Xcode
